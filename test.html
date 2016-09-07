@@ -17,8 +17,8 @@
 	<body>
 		<div style="margin-left: 25%">
 			<button onclick="toFrontView();">toFront</button>
-			<button onclick="toRight();">toRight</button>
-			<button onclick="toTop();">toTop</button>
+			<button onclick="toRightView();">toRight</button>
+			<button onclick="toTopView();">toTop</button>
 		</div>
 		<script src="three.js"></script>
 		<script src="TrackballControls.js"></script>
@@ -56,25 +56,16 @@
 			animate();
 
 			toFrontView = function() {
+				controls.reset();
 				camera.position.set(0,0,farthestDistanceFromOrigin(camera));
-				camera.rotation.set(0,0,0);
-				//camera.up = new THREE.Vector3(0,0,1);
-				console.log('down' , camera.position, camera.rotation, print4x4Matrix(camera.matrix));
-				//camera.lookAt(new THREE.Vector3(0,0,0));
 			}
-			toRight = function() {
+			toSideView = function() {
+				controls.reset();
 				camera.position.set(farthestDistanceFromOrigin(camera),0,0);
-				camera.rotation.set(0,0,0);
-				//camera.up = new THREE.Vector3(0,0,1);
-				console.log('down' , camera.position, camera.rotation, print4x4Matrix(camera.matrix));
-				//camera.lookAt(new THREE.Vector3(0,0,0));
 			}
-			toTop = function() {
+			toTopView = function() {
+				controls.reset();
 				camera.position.set(0,farthestDistanceFromOrigin(camera),0);
-				camera.rotation.set(0,0,0);
-				//camera.up = new THREE.Vector3(0,0, 1);
-				console.log('down' , camera.position, camera.rotation, print4x4Matrix(camera.matrix));
-				//camera.lookAt(new THREE.Vector3(0,0,0));
 			}
 
 			farthestDistanceFromOrigin = function(camera) {
@@ -123,17 +114,26 @@
 							rotating = false;
 							dragging = !dragging;
 							break;			
-						case '1' : 	// remvoe z rotation 
-							rotateAroundWorldAxis(SELECTED, zAxis, 0);
+						case '1' :
+							if (SELECTED) {
+
+							}
+							else
+								toFrontView();
 							break;
 						case '2' :
-							dragging = !dragging;
+							if (SELECTED) {
+
+							}
+							else
+								toSideView();
 							break;
 						case '3' :
-							rotating = !rotating;
-							break;
-						case '4' :
-							dragging = !dragging;
+							if (SELECTED) {
+
+							}
+							else
+								toTopView();
 							break;
 					}
 					console.log('down' , event, camera.position, camera.rotation, print4x4Matrix(camera.matrix));
@@ -347,12 +347,18 @@
 				if ( intersects.length > 0 ) {
 					controls.enabled = false;
 					SELECTED = intersects[ 0 ].object;
+					highlightSelected();
 					if ( raycaster.ray.intersectPlane( plane, intersection ) ) {
 						offset.copy( intersection ).sub( SELECTED.position );
 					}
 					container.style.cursor = 'move';
 				}
 			}
+
+			function highlightSelected() {
+				SELECTED
+			}
+
 
 			function onDocumentMouseUp( event ) {
 				event.preventDefault();
