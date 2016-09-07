@@ -8434,14 +8434,14 @@
 	 */
 
 	function Color( r, g, b ) {
-
 		if ( g === undefined && b === undefined ) {
-
 			// r is THREE.Color, hex or string
 			return this.set( r );
 
 		}
-
+		this.baseR = r;
+		this.baseG = g;
+		this.baseB = b;
 		return this.setRGB( r, g, b );
 
 	}
@@ -8453,6 +8453,8 @@
 		isColor: true,
 
 		r: 1, g: 1, b: 1,
+
+		baseR: 1, baseG: 1, baseB: 1,
 
 		set: function ( value ) {
 
@@ -8469,7 +8471,9 @@
 				this.setStyle( value );
 
 			}
-
+			this.baseR = this.r;
+			this.baseG = this.g;
+			this.baseB = this.b;
 			return this;
 
 		},
@@ -18841,7 +18845,46 @@
 
 			return new this.constructor( this.geometry, this.material ).copy( this );
 
+		},
+
+		highlight: function(brightenAmount) {
+			var r = this.material.color.r * brightenAmount;
+			var g = this.material.color.g * brightenAmount;
+			var b = this.material.color.b * brightenAmount;
+			this.material.color.setRGB(r, g, b)
+		},
+
+		unHighlight: function() {
+			var r = SELECTED.material.color.baseR;
+			var g = SELECTED.material.color.baseG;
+			var b = SELECTED.material.color.baseB;
+			SELECTED.material.color.setRGB(r, g, b)
+		},
+
+		removeRotationAroundAxis: function(axis) {
+			var x = this.rotation.x;
+			var y = this.rotation.y;
+			var z = this.rotation.z;
+
+			switch(axis) {
+				case 'x':
+					SELECTED.setRotationFromAxisAngle(xAxis, 0);
+					SELECTED.setRotationFromAxisAngle(yAxis, y);
+					SELECTED.setRotationFromAxisAngle(zAxis, z);
+					break;
+				case 'y':
+					SELECTED.setRotationFromAxisAngle(xAxis, x);
+					SELECTED.setRotationFromAxisAngle(yAxis, 0);
+					SELECTED.setRotationFromAxisAngle(zAxis, z);
+					break;
+				case 'z':
+					SELECTED.setRotationFromAxisAngle(xAxis, x);
+					SELECTED.setRotationFromAxisAngle(yAxis, y);
+					SELECTED.setRotationFromAxisAngle(zAxis, 0);
+					break;
+			}
 		}
+
 
 	} );
 

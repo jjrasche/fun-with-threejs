@@ -49,7 +49,9 @@
 			var mouse = new THREE.Vector2(),
 			offset = new THREE.Vector3(),
 			intersection = new THREE.Vector3(),
-			INTERSECTED, SELECTED;
+			INTERSECTED; 
+			var SELECTED;
+			var brightenAmount = 1.5;
 			var previousMousePosition = { x: 0, y: 0 };
 
 			init();
@@ -116,21 +118,21 @@
 							break;			
 						case '1' :
 							if (SELECTED) {
-
+								SELECTED.removeRotationAroundAxis('z');
 							}
 							else
 								toFrontView();
 							break;
 						case '2' :
 							if (SELECTED) {
-
+								SELECTED.removeRotationAroundAxis('x');
 							}
 							else
 								toSideView();
 							break;
 						case '3' :
 							if (SELECTED) {
-
+								SELECTED.removeRotationAroundAxis('y');
 							}
 							else
 								toTopView();
@@ -188,7 +190,7 @@
 				var geometry = new THREE.BoxGeometry( 40, 40, 40 );
 
 				// create object
-				var xobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xff0000 } ) );
+				var xobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0xa00000 } ) );
 				xobj.position.x = 200;
 				xobj.position.y = 0;
 				xobj.position.z = 0;
@@ -204,7 +206,7 @@
 				scene.add(xobj);
 				objects.push(xobj);
 
-				var yobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0x00ff00 } ) );
+				var yobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0x00a000 } ) );
 				yobj.position.x = 0;
 				yobj.position.y = 200;
 				yobj.position.z = 0;
@@ -220,7 +222,7 @@
 				scene.add(yobj);
 				objects.push(yobj);
 
-				var zobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0x0000ff } ) );
+				var zobj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0x0000a0 } ) );
 				zobj.position.x = 0;
 				zobj.position.y = 0;
 				zobj.position.z = 200;
@@ -235,6 +237,23 @@
 
 				scene.add(zobj);
 				objects.push(zobj);
+
+				var obj = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: 0x888888 } ) );
+				obj.position.x = 0;
+				obj.position.y = 0;
+				obj.position.z = 10;
+
+				obj.rotation.x = 45;
+				obj.rotation.y = 45;
+				obj.rotation.z = 45;
+
+				obj.scale.x = 1;
+				obj.scale.y = 1;
+				obj.scale.z = 1;
+
+				scene.add(obj);
+				objects.push(obj);
+
 
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -317,57 +336,46 @@
 						}
 					}
 				}
-				var intersects = raycaster.intersectObjects( objects );
-				if ( intersects.length > 0 ) {
-					if ( INTERSECTED != intersects[ 0 ].object ) {
-						if ( INTERSECTED ) 
-							INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-						INTERSECTED = intersects[ 0 ].object;
-						INTERSECTED.currentHex = INTERSECTED.material.color.getHex();
-
-						plane.setFromNormalAndCoplanarPoint(
-							camera.getWorldDirection( plane.normal ),
-							INTERSECTED.position );
-					}
-					container.style.cursor = 'pointer';
-				} else {
-					if ( INTERSECTED ) 
-						INTERSECTED.material.color.setHex( INTERSECTED.currentHex );
-					INTERSECTED = null;
-					container.style.cursor = 'auto';
-				}
-
 			}
 
 			function onDocumentMouseDown( event ) {
 				event.preventDefault();
 				raycaster.setFromCamera( mouse, camera );
 				var intersects = raycaster.intersectObjects( objects );
-
-				if ( intersects.length > 0 ) {
+				if (rotating) {
+					rotating = false;
+					return;
+				}				
+				if ( intersects.length > 0) {
+					// unselect already selected
+					if (SELECTED) {
+						SELECTED.unHighlight();
+					}
+					if (dragging) {
+						dragging = false;
+					}
 					controls.enabled = false;
 					SELECTED = intersects[ 0 ].object;
-					highlightSelected();
+					SELECTED.highlight(brightenAmount);
 					if ( raycaster.ray.intersectPlane( plane, intersection ) ) {
 						offset.copy( intersection ).sub( SELECTED.position );
 					}
 					container.style.cursor = 'move';
 				}
+				else {
+					if (SELECTED) {
+						SELECTED.unHighlight();
+						SELECTED = null;
+					}
+				}
 			}
-
-			function highlightSelected() {
-				SELECTED
-			}
-
 
 			function onDocumentMouseUp( event ) {
 				event.preventDefault();
 				controls.enabled = true;
-				SELECTED = null;
 				container.style.cursor = 'auto';
 			}
 
-			//
 
 			function animate() {
 				requestAnimationFrame( animate );
@@ -427,6 +435,8 @@
 			    // code for r59+:
 			    object.rotation.setFromRotationMatrix(object.matrix);
 			}			
+
+			THREE.Mesh.pr
 		</script>
 
 	</body>
