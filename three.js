@@ -18494,6 +18494,8 @@
 
 	};
 
+
+
 	/**
 	 * @author mrdoob / http://mrdoob.com/
 	 * @author alteredq / http://alteredqualia.com/
@@ -18855,10 +18857,10 @@
 		},
 
 		unHighlight: function() {
-			var r = SELECTED.material.color.baseR;
-			var g = SELECTED.material.color.baseG;
-			var b = SELECTED.material.color.baseB;
-			SELECTED.material.color.setRGB(r, g, b)
+			var r = this.material.color.baseR;
+			var g = this.material.color.baseG;
+			var b = this.material.color.baseB;
+			this.material.color.setRGB(r, g, b)
 		},
 
 		removeRotationAroundAxis: function(axis) {
@@ -18868,19 +18870,22 @@
 
 			switch(axis) {
 				case 'x':
-					SELECTED.setRotationFromAxisAngle(xAxis, 0);
-					SELECTED.setRotationFromAxisAngle(yAxis, y);
-					SELECTED.setRotationFromAxisAngle(zAxis, z);
+					this.setRotationFromAxisAngle(THREE.xAxis, 0);
+					this.setRotationFromAxisAngle(THREE.yAxis, y);
+					this.setRotationFromAxisAngle(THREE.zAxis, z);
+					console.log(x, y, z);
 					break;
 				case 'y':
-					SELECTED.setRotationFromAxisAngle(xAxis, x);
-					SELECTED.setRotationFromAxisAngle(yAxis, 0);
-					SELECTED.setRotationFromAxisAngle(zAxis, z);
+					this.setRotationFromAxisAngle(THREE.xAxis, x);
+					this.setRotationFromAxisAngle(THREE.yAxis, 0);
+					this.setRotationFromAxisAngle(THREE.zAxis, z);
+					console.log(x, y, z);
 					break;
 				case 'z':
-					SELECTED.setRotationFromAxisAngle(xAxis, x);
-					SELECTED.setRotationFromAxisAngle(yAxis, y);
-					SELECTED.setRotationFromAxisAngle(zAxis, 0);
+					this.setRotationFromAxisAngle(THREE.xAxis, x);
+					this.setRotationFromAxisAngle(THREE.yAxis, y);
+					this.setRotationFromAxisAngle(THREE.zAxis, 0);
+					console.log(x, y, z);
 					break;
 			}
 		}
@@ -41773,6 +41778,9 @@
 	exports.ImageUtils = ImageUtils;
 	exports.Projector = Projector;
 	exports.CanvasRenderer = CanvasRenderer;
+	exports.xAxis = new Vector3(1,0,0);
+	exports.yAxis = new Vector3(0,1,0);
+	exports.zAxis = new Vector3(0,0,1);
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
